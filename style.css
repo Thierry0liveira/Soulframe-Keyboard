@@ -1,0 +1,98 @@
+@font-face {
+    font-family: 'FonteSoulframe';
+    src: url('fonts/Fonte_Soulframe.ttf') format('truetype');
+}
+
+body {
+    background-color: #000; /* fundo preto original */
+    color: #d4af37; /* dourado do Soulframe */
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+#titulo {
+    font-size: 2.5em;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    color: #d4af37;
+    transition: all 0.3s ease;
+}
+
+#titulo.sf-ativo {
+    font-family: 'FonteSoulframe';
+    letter-spacing: 3px;
+}
+
+.teclado-container {
+    display: inline-block;
+    padding: 20px;
+    border-radius: 20px;
+    background: rgba(20, 20, 20, 0.85);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+#display {
+    width: 100%;
+    max-width: 600px;
+    height: 100px;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #d4af37;
+    background: #000;
+    color: #fff;
+    resize: none;
+}
+
+#display.sf-ativo {
+    font-family: 'FonteSoulframe';
+}
+
+.linha-teclas {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.tecla {
+    font-size: 1.1em;
+    margin: 4px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: 1px solid #555;
+    background: #111;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.tecla.sf-ativo {
+    font-family: 'FonteSoulframe';
+}
+
+.tecla:hover {
+    background: #222;
+    transform: scale(1.05);
+}
+
+/* Linhas coloridas */
+.linha-verde .tecla { border-color: #00ffb3; }
+.linha-vermelha .tecla { border-color: #ff4d4d; }
+.linha-azul .tecla { border-color: #3399ff; }
+
+/* Tecla de espaço */
+#espaco {
+    width: 400px;
+    border-color: #00ffb3;
+    background: #001a12;
+    font-weight: bold;
+}
+
+/* Efeito de clique */
+.tecla:active {
+    transform: scale(0.95);
+    filter: brightness(1.3);
+}
