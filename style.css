@@ -172,42 +172,14 @@ body {
         overflow-x: hidden;
     }
 
-    /* =========================
-   TÍTULO COM BRILHO DOURADO
-   ========================= */
-#titulo {
-    font-size: 3em;
-    margin: 20px 0 10px;
-    text-align: center;
-    color: #ffd700;
-    font-weight: bold;
-    text-shadow:
-        0 0 10px rgba(255, 215, 0, 0.8),
-        0 0 20px rgba(255, 215, 0, 0.6),
-        2px 2px 0 #000,
-        -2px -2px 0 #000;
-    animation: brilhoDourado 3s ease-in-out infinite;
-}
-
-@keyframes brilhoDourado {
-    0%, 100% {
+    #titulo {
+        font-size: 2em;
+        margin-top: 15px;
         text-shadow:
-            0 0 10px rgba(255, 215, 0, 0.8),
-            0 0 20px rgba(255, 215, 0, 0.6),
             2px 2px 0 #000,
-            -2px -2px 0 #000;   
-        color: #ffd700;
+            -2px -2px 0 #000,
+            0 0 10px rgba(255, 215, 0, 0.7);
     }
-    50% {
-        text-shadow:
-            0 0 20px rgba(255, 255, 180, 1),
-            0 0 35px rgba(255, 215, 0, 0.9),
-            3px 3px 0 #000,
-            -3px -3px 0 #000;
-        color: #fff3b0;
-    }
-}
-
 
     .teclado-container {
         width: 95%;
