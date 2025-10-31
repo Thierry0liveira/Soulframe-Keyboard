@@ -26,7 +26,7 @@ ptSf.addEventListener('click', () => {
     titulo.classList.toggle('sf-ativo', sfAtivo);
 
     // Atualiza o texto do botão
-    ptSf.textContent = sfAtivo ? "LAT" : "SFS";
+    ptSf.textContent = sfAtivo ? "LAT" : "ODE";
 });
 
 // Limpar display
