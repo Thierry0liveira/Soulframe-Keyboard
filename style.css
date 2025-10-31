@@ -162,54 +162,115 @@ body {
 }
 
 /* =========================
-   RESPONSIVIDADE
+   RESPONSIVIDADE AJUSTADA
    ========================= */
 
 /* Tablets e celulares */
 @media (max-width: 768px) {
-    #titulo {
-        font-size: 2em;
-        margin-top: 15px;
+    body {
+        padding: 10px;
+        overflow-x: hidden;
     }
 
-    .teclado-container {
-        width: 90%;
-        padding: 15px;
-        transform: scale(0.9);
-    }
+    /* =========================
+   TÍTULO COM BRILHO DOURADO
+   ========================= */
+#titulo {
+    font-size: 3em;
+    margin: 20px 0 10px;
+    text-align: center;
+    color: #ffd700;
+    font-weight: bold;
+    text-shadow:
+        0 0 10px rgba(255, 215, 0, 0.8),
+        0 0 20px rgba(255, 215, 0, 0.6),
+        2px 2px 0 #000,
+        -2px -2px 0 #000;
+    animation: brilhoDourado 3s ease-in-out infinite;
+}
 
-    #display {
-        max-width: 90%;
-        height: 90px;
-        font-size: 1.1em;
+@keyframes brilhoDourado {
+    0%, 100% {
+        text-shadow:
+            0 0 10px rgba(255, 215, 0, 0.8),
+            0 0 20px rgba(255, 215, 0, 0.6),
+            2px 2px 0 #000,
+            -2px -2px 0 #000;   
+        color: #ffd700;
     }
-
-    .tecla {
-        padding: 10px 16px;
-        font-size: 1em;
-    }
-
-    #espaco {
-        width: 70%;
+    50% {
+        text-shadow:
+            0 0 20px rgba(255, 255, 180, 1),
+            0 0 35px rgba(255, 215, 0, 0.9),
+            3px 3px 0 #000,
+            -3px -3px 0 #000;
+        color: #fff3b0;
     }
 }
 
-/* Celulares pequenos */
-@media (max-width: 480px) {
-    #titulo {
-        font-size: 1.6em;
-    }
 
     .teclado-container {
-        transform: scale(0.8);
+        width: 95%;
+        padding: 10px;
+        border-radius: 15px;
+    }
+
+    #display {
+        width: 90%;
+        height: 80px;
+        font-size: 1em;
+        padding: 8px;
+        margin-bottom: 15px;
+    }
+
+    .linha-teclas {
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 8px;
     }
 
     .tecla {
-        padding: 8px 14px;
+        flex: 1 0 9%;
+        min-width: 40px;
+        max-width: 55px;
+        padding: 10px 0;
         font-size: 0.9em;
+        margin: 3px;
     }
 
     #espaco {
         width: 80%;
+    }
+}
+
+/* Celulares pequenos (tela < 480px) */
+@media (max-width: 480px) {
+    #titulo {
+        font-size: 1.5em;
+        margin-top: 10px;
+    }
+
+    .teclado-container {
+        width: 98%;
+        padding: 8px;
+    }
+
+    #display {
+        width: 95%;
+        height: 70px;
+        font-size: 0.95em;
+        padding: 6px;
+    }
+
+    .tecla {
+        min-width: 35px;
+        max-width: 50px;
+        font-size: 0.85em;
+        padding: 8px 0;
+        margin: 2px;
+    }
+
+    #espaco {
+        width: 90%;
     }
 }

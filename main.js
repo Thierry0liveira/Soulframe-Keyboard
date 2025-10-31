@@ -7,7 +7,7 @@ const titulo = document.getElementById('titulo');
 
 let sfAtivo = false;
 
-// Alternar modo SFS/LTS  na qual SFS = Soulframe Script e LTS = Latin Script
+// Alternar modo SFS/LAT na qual SFS = Soulframe Script e LAT = Latin Script
 ptSf.addEventListener('click', () => {
     sfAtivo = !sfAtivo;
 
@@ -26,7 +26,7 @@ ptSf.addEventListener('click', () => {
     titulo.classList.toggle('sf-ativo', sfAtivo);
 
     // Atualiza o texto do botão
-    ptSf.textContent = sfAtivo ? "LTS" : "SFS";
+    ptSf.textContent = sfAtivo ? "LAT" : "SFS";
 });
 
 // Limpar display
