@@ -4,8 +4,10 @@
 }
 
 body {
-    background-color: #000; /* fundo preto original */
-    color: #d4af37; /* dourado do Soulframe */
+    background: url('background.png') no-repeat center center fixed;
+    background-size: cover;
+    background-color: #000; /* cor de fallback */
+    color: #d4af37; 
     font-family: Arial, sans-serif;
     text-align: center;
     margin: 0;

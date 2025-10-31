@@ -7,14 +7,14 @@ const titulo = document.getElementById('titulo');
 
 let sfAtivo = false;
 
-// Alternar modo SF/PT
+// Alternar modo SFS/LTS  na qual SFS = Soulframe Script e LTS = Latin Script
 ptSf.addEventListener('click', () => {
     sfAtivo = !sfAtivo;
 
     // Alterna a fonte da textarea
     display.classList.toggle('sf-ativo', sfAtivo);
 
-    // Alterna fonte das teclas (exceto PT/SF e Limpar)
+    // Alterna fonte das teclas (exceto LTS/SFS e Limpar)
     teclas.forEach(tecla => {
         tecla.classList.toggle('sf-ativo', sfAtivo);
     });
@@ -26,7 +26,7 @@ ptSf.addEventListener('click', () => {
     titulo.classList.toggle('sf-ativo', sfAtivo);
 
     // Atualiza o texto do botão
-    ptSf.textContent = sfAtivo ? "PT" : "SF";
+    ptSf.textContent = sfAtivo ? "LTS" : "SFS";
 });
 
 // Limpar display
