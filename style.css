@@ -3,6 +3,17 @@
     src: url('fonts/Fonte_Soulframe.ttf') format('truetype');
 }
 
+/* Nova fonte */
+@font-face {
+    font-family: 'FonteRose';
+    src: url('fonts/Fonte_Soulframe_2.ttf') format('truetype');
+}
+
+.novo-ativo {
+    font-family: 'FonteRose';
+}
+
+
 /* Fundo */
 body {
     background: url('background.png') no-repeat center center fixed;
@@ -64,6 +75,7 @@ body {
     resize: none;
     animation: borderWave 3s linear infinite;
     box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+     line-height: 1.5;
 }
 
 #display.sf-ativo {
