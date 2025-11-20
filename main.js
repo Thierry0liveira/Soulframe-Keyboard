@@ -6,7 +6,7 @@ const espaco = document.getElementById('espaco');
 const titulo = document.getElementById('titulo');
 
 // LISTA DOS IDIOMAS
-const idiomas = ["LAT", "ODE", "ROSE"]; // começa no LAT
+const idiomas = ["LAT", "ODE", "ROS"]; // começa no LAT
 
 // O primeiro idioma é o atual
 let idiomaAtual = 0;
@@ -16,7 +16,7 @@ function aplicarFonte(id) {
     const idioma = idiomas[id];
 
     const fonteSoulframe = idioma === "ODE";
-    const fonteNova = idioma === "ROSE";
+    const fonteNova = idioma === "ROS";
 
     display.classList.remove("sf-ativo", "novo-ativo");
     titulo.classList.remove("sf-ativo", "novo-ativo");
