@@ -1,61 +1,220 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soulframe Keyboard</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="favicon.png">
+  <!-- Codificação e viewport para funcionar bem em celulares -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- Cor da barra de status no celular (Android Chrome) -->
+  <meta name="theme-color" content="#000000" />
+
+  <!-- Título da aba do navegador -->
+  <title>Soulframe Keyboard — Fictional Language Translator</title>
+
+  <!-- Descrição que aparece nos resultados do Google -->
+  <meta name="description" content="Type and translate text into Soulframe's fictional languages: ODE, ROS and LAT. Open-source virtual keyboard for the Soulframe wiki community." />
+
+  <!-- Open Graph: como o link aparece quando compartilhado no Discord, redes sociais etc -->
+  <meta property="og:title" content="Soulframe Keyboard — Fictional Language Translator" />
+  <meta property="og:description" content="Translate text into Soulframe's fictional scripts ODE and ROS." />
+  <meta property="og:url" content="https://thierry0liveira.github.io/Soulframe-Keyboard/" />
+  <meta property="og:type" content="website" />
+
+  <!-- Ícone que aparece na aba do navegador -->
+  <link rel="icon" type="image/png" href="favicon.png" />
+
+  <!-- Pré-carrega as fontes das runas antes da página terminar de carregar
+       Evita o piscar de texto sem fonte (FOIT) -->
+  <link rel="preload" href="fonts/Fonte_Soulframe.ttf" as="font" type="font/truetype" crossorigin="anonymous" />
+  <link rel="preload" href="fonts/Fonte_Soulframe_2.ttf" as="font" type="font/truetype" crossorigin="anonymous" />
+
+  <!-- Arquivo de estilos -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <!-- ================================================
+       CARROSSEL KEN BURNS
+       4 divs vazias — o CSS aplica as imagens de fundo
+       e cuida de toda a animação de zoom + fade.
+       aria-hidden="true" = leitores de tela ignoram (é decorativo)
+       ================================================ -->
+  <div class="kb-slideshow" aria-hidden="true">
+    <div class="kb-slide"></div> <!-- background.png — sobe -->
+    <div class="kb-slide"></div> <!-- bg2.png — vai para direita -->
+    <div class="kb-slide"></div> <!-- bg3.jpg — desce -->
+    <div class="kb-slide"></div> <!-- bg4.png — vai para esquerda -->
+  </div>
+
+  <!-- Camada escura sobre as imagens para o teclado ficar legível -->
+  <div class="kb-overlay" aria-hidden="true"></div>
+
+  <!-- ================================================
+       CONTAINER DE SCROLL
+       Único elemento que pode rolar na página.
+       Fica acima do carrossel (z-index maior).
+       ================================================ -->
+  <div class="page-scroll">
+
+    <!-- Título principal — muda de fonte quando troca o idioma -->
     <h1 id="titulo">Soulframe Keyboard</h1>
 
+    <!-- ================================================
+         CONTAINER DO TECLADO
+         Agrupa display + botões de ação + teclas + histórico
+         ================================================ -->
     <div class="teclado-container">
-        <textarea id="display" placeholder="Type here..."></textarea>
 
-        <div class="linha-teclas linha-verde">
-            <button class="tecla" data-key="Q">Q</button>
-            <button class="tecla" data-key="W">W</button>
-            <button class="tecla" data-key="E">E</button>
-            <button class="tecla" data-key="R">R</button>
-            <button class="tecla" data-key="T">T</button>
-            <button class="tecla" data-key="Y">Y</button>
-            <button class="tecla" data-key="U">U</button>
-            <button class="tecla" data-key="I">I</button>
-            <button class="tecla" data-key="O">O</button>
-            <button class="tecla" data-key="P">P</button>
+      <!-- Caixa de texto onde a tradução aparece
+           inputmode="none" evita abrir o teclado nativo do celular -->
+      <textarea
+        id="display"
+        placeholder="Type here..."
+        aria-label="Translation output"
+        autocomplete="off"
+        autocorrect="off"
+        spellcheck="false"
+        inputmode="none"
+      ></textarea>
+
+      <!-- Botões acima do teclado: Copiar e Limpar Histórico -->
+      <div class="acoes">
+
+        <!-- Botão de copiar — começa desabilitado, ativa quando tem texto -->
+        <button id="btn-copy" class="btn-acao btn-copy" title="Copy translation" aria-label="Copy translation to clipboard" disabled>
+          <!-- Ícone de copiar (SVG inline) -->
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          Copy
+        </button>
+
+        <!-- Botão de limpar histórico — só aparece quando tem histórico salvo -->
+        <button id="btn-clear-history" class="btn-acao btn-ghost" aria-label="Clear history" style="display:none;">Clear History</button>
+
+      </div>
+
+      <!-- Linha 1 — QWERTYUIOP — borda verde -->
+      <div class="linha-teclas linha-verde">
+        <button class="tecla" data-key="Q">Q</button>
+        <button class="tecla" data-key="W">W</button>
+        <button class="tecla" data-key="E">E</button>
+        <button class="tecla" data-key="R">R</button>
+        <button class="tecla" data-key="T">T</button>
+        <button class="tecla" data-key="Y">Y</button>
+        <button class="tecla" data-key="U">U</button>
+        <button class="tecla" data-key="I">I</button>
+        <button class="tecla" data-key="O">O</button>
+        <button class="tecla" data-key="P">P</button>
+      </div>
+
+      <!-- Linha 2 — ASDFGHJKL — borda vermelha -->
+      <div class="linha-teclas linha-vermelha">
+        <button class="tecla" data-key="A">A</button>
+        <button class="tecla" data-key="S">S</button>
+        <button class="tecla" data-key="D">D</button>
+        <button class="tecla" data-key="F">F</button>
+        <button class="tecla" data-key="G">G</button>
+        <button class="tecla" data-key="H">H</button>
+        <button class="tecla" data-key="J">J</button>
+        <button class="tecla" data-key="K">K</button>
+        <button class="tecla" data-key="L">L</button>
+      </div>
+
+      <!-- Linha 3 — ZXCVBNM — borda azul
+           Inclui o botão de trocar idioma (pt-sf) e o botão Clear -->
+      <div class="linha-teclas linha-azul">
+
+        <!-- Botão de trocar idioma — mostra o PRÓXIMO idioma disponível
+             Clicando vai: LAT → ODE → ROS → LAT... -->
+        <button id="pt-sf" class="tecla">ODE</button>
+
+        <button class="tecla" data-key="Z">Z</button>
+        <button class="tecla" data-key="X">X</button>
+        <button class="tecla" data-key="C">C</button>
+        <button class="tecla" data-key="V">V</button>
+        <button class="tecla" data-key="B">B</button>
+        <button class="tecla" data-key="N">N</button>
+        <button class="tecla" data-key="M">M</button>
+
+        <!-- Botão Clear — apaga todo o texto do display -->
+        <button id="limpar" class="tecla">Clear</button>
+
+      </div>
+
+      <!-- Linha 4 — Barra de espaço — borda verde -->
+      <div class="linha-teclas linha-verde">
+        <button id="espaco" class="tecla">Space</button>
+      </div>
+
+      <!-- ================================================
+           HISTÓRICO DE TRADUÇÕES
+           Fica escondido (display:none) até ter alguma entrada.
+           O JavaScript mostra/esconde automaticamente.
+           ================================================ -->
+      <div id="historico-container" class="historico-container" style="display:none;">
+
+        <div class="historico-header">
+          <span class="historico-titulo">&#128336; History</span>
+          <!-- Botão secundário de limpar histórico (dentro do painel) -->
+          <button id="btn-clear-history2" class="btn-acao btn-ghost" aria-label="Clear history">Clear</button>
         </div>
 
-        <div class="linha-teclas linha-vermelha">
-            <button class="tecla" data-key="A">A</button>
-            <button class="tecla" data-key="S">S</button>
-            <button class="tecla" data-key="D">D</button>
-            <button class="tecla" data-key="F">F</button>
-            <button class="tecla" data-key="G">G</button>
-            <button class="tecla" data-key="H">H</button>
-            <button class="tecla" data-key="J">J</button>
-            <button class="tecla" data-key="K">K</button>
-            <button class="tecla" data-key="L">L</button>
+        <!-- Lista onde o JavaScript injeta os itens do histórico -->
+        <ul id="historico-lista" class="historico-lista" role="list"></ul>
+
+      </div>
+
+    </div><!-- /teclado-container -->
+
+    <!-- ================================================
+         SEÇÃO DE APOIO — Buy me a coffee
+         ================================================ -->
+    <div class="apoio-container">
+      <div class="apoio-card">
+
+        <!-- Ícone de xícara -->
+        <span class="apoio-icon">&#9749;</span>
+
+        <div class="apoio-texto">
+          <h2 class="apoio-titulo">Buy me a coffee</h2>
+          <p class="apoio-desc">If you enjoy this project and would like to support its development, consider buying me a coffee.</p>
+
+          <!-- Link para a página do Buy Me a Coffee — troque SEULINK pelo seu usuário -->
+          <a href="https://www.buymeacoffee.com/ThierryDev" target="_blank" rel="noopener noreferrer" class="apoio-btn">
+            &#9749; Buy me a coffee
+          </a>
         </div>
 
-        <div class="linha-teclas linha-azul">
-            <button id="pt-sf" class="tecla">ODE</button>
-            <button class="tecla" data-key="Z">Z</button>
-            <button class="tecla" data-key="X">X</button>
-            <button class="tecla" data-key="C">C</button>
-            <button class="tecla" data-key="V">V</button>
-            <button class="tecla" data-key="B">B</button>
-            <button class="tecla" data-key="N">N</button>
-            <button class="tecla" data-key="M">M</button>
-            <button id="limpar" class="tecla">Clear</button>
-        </div>
+        <!-- Link para o repositório no GitHub -->
+        <a href="https://github.com/Thierry0liveira/Soulframe-Keyboard" target="_blank" rel="noopener noreferrer" class="github-link">
+          <!-- Logo do GitHub em SVG -->
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/>
+          </svg>
+          Open Source on GitHub
+        </a>
 
-        <div class="linha-teclas linha-verde">
-            <button id="espaco" class="tecla">Space</button>
-        </div>
+      </div>
+    </div><!-- /apoio-container -->
+
+    <!-- ================================================
+         TOAST DE CONFIRMAÇÃO
+         Aparece brevemente na parte inferior da tela
+         quando o usuário copia o texto.
+         aria-live="assertive" = leitores de tela anunciam na hora
+         ================================================ -->
+    <div id="toast" class="toast" role="alert" aria-live="assertive" aria-hidden="true">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      <span id="toast-msg">Copied!</span>
     </div>
 
-    <script src="main.js"></script>
+  </div><!-- /page-scroll -->
+
+  <!-- JavaScript — carregado no final para não travar o carregamento da página -->
+  <script src="main.js"></script>
 </body>
 </html>

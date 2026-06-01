@@ -1,260 +1,663 @@
+/* ================================================
+   SOULFRAME KEYBOARD — style.css v2.2
+   Criado por: Thierry Oliveira (ThierryDev)
+
+   O que este arquivo faz:
+   - Define as fontes das runas (ODE e ROS)
+   - Controla o carrossel Ken Burns de fundo
+   - Estiliza o teclado, display, botões e histórico
+   - Garante responsividade em celulares e tablets
+   - Sem scroll horizontal em nenhum tamanho de tela
+   ================================================ */
+
+
+/* ------------------------------------------------
+   FONTES DAS RUNAS
+   As duas fontes que eu criei no FontForge.
+   font-display: swap → mostra a fonte padrão enquanto
+   as fontes das runas carregam (evita texto invisível).
+   ------------------------------------------------ */
 @font-face {
-    font-family: 'FonteSoulframe';
+    font-family: 'FonteSoulframe'; /* nome que uso no CSS para o alfabeto ODE */
     src: url('fonts/Fonte_Soulframe.ttf') format('truetype');
+    font-display: swap;
 }
-
-/* Nova fonte */
 @font-face {
-    font-family: 'FonteRose';
+    font-family: 'FonteRose'; /* nome que uso no CSS para o alfabeto ROS */
     src: url('fonts/Fonte_Soulframe_2.ttf') format('truetype');
-}
-
-.novo-ativo {
-    font-family: 'FonteRose';
+    font-display: swap;
 }
 
 
-/* Fundo */
-body {
-    background: url('background.png') no-repeat center center fixed;
-    background-size: cover;
-    background-color: #000; /* fallback */
-    color: #d4af37;
-    font-family: Arial, sans-serif;
-    text-align: center;
+/* ------------------------------------------------
+   RESET BÁSICO
+   Garante que padding e borda sejam incluídos
+   no tamanho dos elementos (comportamento esperado).
+   Zera margem e padding padrão dos navegadores.
+   ------------------------------------------------ */
+*, *::before, *::after {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-/* Título */
+
+/* ------------------------------------------------
+   RAIZ DA PÁGINA
+   overflow: hidden no html e body impede qualquer
+   scroll na página — o carrossel e o teclado
+   ficam sempre dentro da tela.
+   ------------------------------------------------ */
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: #000; /* cor de fundo enquanto as imagens carregam */
+}
+
+body {
+    color: #d4af37; /* dourado — cor padrão do texto */
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+
+/* ================================================
+   CARROSSEL KEN BURNS
+   Funciona com 4 divs vazias no HTML.
+   O CSS aplica uma imagem diferente em cada div
+   e controla a animação de zoom + fade.
+
+   Cada slide:
+   - Fica visível por ~7 segundos
+   - Faz zoom de 100% → 112% (efeito cinematográfico)
+   - Pan em uma direção diferente
+   - Ciclo completo: 28 segundos (4 × 7s)
+   ================================================ */
+
+/* Container fixo que fica atrás de tudo (z-index: 0) */
+.kb-slideshow {
+    position: fixed; /* fica parado mesmo se houver scroll */
+    inset: 0;        /* ocupa 100% da tela (top/right/bottom/left = 0) */
+    z-index: 0;
+    overflow: hidden;
+}
+
+/* Cada slide começa invisível (opacity: 0) */
+.kb-slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;          /* imagem cobre toda a área */
+    background-position: center center;
+    opacity: 0;
+    will-change: transform, opacity; /* dica para o navegador usar a GPU */
+}
+
+/* Slide 1 — background.png — pan de baixo para cima */
+.kb-slide:nth-child(1) {
+    background-image: url('background.png');
+    animation: kb-fade 28s linear infinite 0s,    /* começa agora */
+               kb-zoom-up 28s linear infinite 0s;
+}
+
+/* Slide 2 — bg2.png — pan da esquerda para direita — começa após 7s */
+.kb-slide:nth-child(2) {
+    background-image: url('bg2.png');
+    animation: kb-fade 28s linear infinite 7s,
+               kb-zoom-right 28s linear infinite 7s;
+}
+
+/* Slide 3 — bg3.png — pan de cima para baixo — começa após 14s */
+.kb-slide:nth-child(3) {
+    background-image: url('bg3.png');
+    animation: kb-fade 28s linear infinite 14s,
+               kb-zoom-down 28s linear infinite 14s;
+}
+
+/* Slide 4 — bg4.png — pan da direita para esquerda — começa após 21s */
+.kb-slide:nth-child(4) {
+    background-image: url('bg4.png');
+    animation: kb-fade 28s linear infinite 21s,
+               kb-zoom-left 28s linear infinite 21s;
+}
+
+/* Animação de fade: aparece em ~1s, fica visível, some em ~1s
+   3.5% de 28s ≈ 1 segundo */
+@keyframes kb-fade {
+    0%     { opacity: 0; } /* invisível */
+    3.5%   { opacity: 1; } /* aparece */
+    25%    { opacity: 1; } /* fica visível */
+    28.5%  { opacity: 0; } /* some */
+    100%   { opacity: 0; } /* espera o próximo ciclo */
+}
+
+/* Animações de zoom + pan (Ken Burns) — 4 direções diferentes */
+@keyframes kb-zoom-up    { 0% { transform: scale(1.0) translateY(0);   } 100% { transform: scale(1.12) translateY(-4%); } }
+@keyframes kb-zoom-right { 0% { transform: scale(1.0) translateX(-3%); } 100% { transform: scale(1.12) translateX(3%);  } }
+@keyframes kb-zoom-down  { 0% { transform: scale(1.0) translateY(-3%); } 100% { transform: scale(1.12) translateY(3%);  } }
+@keyframes kb-zoom-left  { 0% { transform: scale(1.0) translateX(3%);  } 100% { transform: scale(1.12) translateX(-3%); } }
+
+/* Camada escura sobre as imagens
+   Gradiente radial: mais claro no centro (onde fica o teclado),
+   mais escuro nas bordas. Garante que as teclas sejam legíveis
+   em qualquer imagem, clara ou escura. */
+.kb-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1; /* acima das imagens, abaixo do conteúdo */
+    background: radial-gradient(
+        ellipse at 50% 40%,
+        rgba(0,0,0,0.42) 0%,    /* centro: 42% escuro */
+        rgba(0,0,0,0.72) 100%   /* bordas: 72% escuro */
+    );
+    pointer-events: none; /* não bloqueia cliques */
+}
+
+
+/* ------------------------------------------------
+   CONTAINER DE SCROLL
+   Único elemento que pode rolar verticalmente.
+   Fica acima do carrossel (z-index: 2).
+
+   Em telas grandes → tudo cabe, sem scroll.
+   Em telas pequenas → rola suavemente se precisar.
+   ------------------------------------------------ */
+.page-scroll {
+    position: relative;
+    z-index: 2;
+    height: 100vh;
+    height: 100dvh; /* 100dvh respeita a barra de endereço em celulares */
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column; /* empilha os elementos verticalmente */
+    align-items: center;    /* centraliza horizontalmente */
+    padding: clamp(8px, 2vh, 20px) 0 clamp(16px, 3vh, 32px);
+    gap: clamp(8px, 1.5vh, 16px); /* espaço entre os blocos */
+    -webkit-overflow-scrolling: touch; /* scroll suave no iOS */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(212,175,55,0.15) transparent;
+}
+/* Barra de scroll fina e dourada (Chrome/Safari) */
+.page-scroll::-webkit-scrollbar       { width: 4px; }
+.page-scroll::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.15); border-radius: 4px; }
+
+
+/* ------------------------------------------------
+   TÍTULO
+   Texto dourado com gradiente.
+   clamp(mínimo, fluido, máximo) → escala com a tela.
+   filter: drop-shadow → brilho dourado (text-shadow
+   não funciona com background-clip: text).
+   ------------------------------------------------ */
 #titulo {
-    font-size: 2.5em;
-    margin-top: 20px;
-    margin-bottom: 30px;
-    
-    /* Cor base transparente (para o gradiente) */
+    font-size: clamp(1.3em, 5vw, 2.5em); /* mínimo 1.3em, máximo 2.5em */
+    flex-shrink: 0; /* não encolhe quando a tela é pequena */
     background: linear-gradient(45deg, #ffd700, #ffcc33, #fffacd, #ffd700);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-
-    /* Brilho dourado */
-    text-shadow: 
-        0 0 5px rgba(255, 215, 0, 0.5),
-        0 0 10px rgba(255, 215, 0, 0.4),
-        0 0 20px rgba(255, 215, 0, 0.3);
-
-    transition: all 0.3s ease;
+    background-clip: text;
+    transition: font-family 0.3s ease; /* transição suave ao trocar idioma */
+    line-height: 1.2;
+    filter: drop-shadow(0 0 12px rgba(255,215,0,0.35)); /* brilho dourado */
 }
 
-#titulo.sf-ativo {
-    font-family: 'FonteSoulframe';
-    letter-spacing: 3px;
-}
+/* Título em fonte de runas quando o idioma ODE está ativo */
+#titulo.sf-ativo   { font-family: 'FonteSoulframe'; letter-spacing: 2px; }
+/* Título em fonte de runas quando o idioma ROS está ativo */
+#titulo.novo-ativo { font-family: 'FonteRose';      letter-spacing: 2px; }
 
-/* Container principal */
+
+/* ------------------------------------------------
+   CONTAINER DO TECLADO
+   Caixa semitransparente que agrupa tudo.
+   min() → no máximo 680px, mas nunca passa de 96% da tela.
+   backdrop-filter: blur → efeito de vidro fosco sobre o fundo.
+   ------------------------------------------------ */
 .teclado-container {
-    display: inline-block;
-    padding: 20px;
-    border-radius: 20px;
-    background: rgba(20, 20, 20, 0.85);
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+    display: block;
+    width: min(680px, 96vw);
+    flex-shrink: 0;
+    padding: clamp(8px, 1.5vw, 18px);
+    border-radius: 18px;
+    background: rgba(14, 14, 20, 0.82); /* fundo escuro semitransparente */
+    box-shadow: 0 0 28px rgba(212,175,55,0.25), inset 0 1px 0 rgba(255,255,255,0.04);
+    backdrop-filter: blur(6px);         /* desfoca o fundo atrás */
+    -webkit-backdrop-filter: blur(6px); /* Safari */
+    border: 1px solid rgba(212,175,55,0.15); /* borda dourada sutil */
 }
 
-/* Caixa de texto */
+
+/* ------------------------------------------------
+   DISPLAY (caixa de texto)
+   Onde a tradução aparece.
+   resize: none → impede o usuário de redimensionar.
+   animation: borderWave → borda dourada pulsante.
+   ------------------------------------------------ */
 #display {
     width: 100%;
-    max-width: 600px;
-    height: 100px;
-    font-size: 1.2em;
-    margin-bottom: 20px;
-    padding: 10px;
+    height: clamp(60px, 10vh, 100px); /* altura fluida com a tela */
+    font-size: clamp(0.9em, 2.5vw, 1.2em);
+    margin-bottom: 6px;
+    padding: clamp(6px, 1.2vw, 10px);
     border-radius: 10px;
     border: 2px solid #d4af37;
-    background: rgba(20, 20, 20, 0.85);
+    background: rgba(10, 10, 16, 0.88);
     color: #fff;
     resize: none;
-    animation: borderWave 3s linear infinite;
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-     line-height: 1.5;
+    animation: borderWave 3s linear infinite; /* borda pulsante */
+    line-height: 1.5;
+    display: block;
+    font-family: Arial, sans-serif; /* fonte padrão para LAT */
 }
 
-#display.sf-ativo {
-    font-family: 'FonteSoulframe';
+/* Fonte de runas ODE no display */
+#display.sf-ativo   { font-family: 'FonteSoulframe'; }
+/* Fonte de runas ROS no display */
+#display.novo-ativo { font-family: 'FonteRose'; }
+
+
+/* ------------------------------------------------
+   BOTÕES DE AÇÃO (Copy e Clear History)
+   Ficam alinhados à direita acima do teclado.
+   ------------------------------------------------ */
+.acoes {
+    display: flex;
+    justify-content: flex-end; /* alinha à direita */
+    gap: 6px;
+    margin-bottom: 8px;
+    width: 100%;
 }
 
-/* Linhas */
+/* Estilo base compartilhado pelos dois botões */
+.btn-acao {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 8px;
+    border: 1px solid;
+    font-size: clamp(0.7em, 1.8vw, 0.82em);
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent; /* remove flash azul no Android */
+    touch-action: manipulation; /* remove delay de 300ms no celular */
+    white-space: nowrap; /* texto não quebra linha */
+}
+.btn-acao:active   { transform: scale(0.96); } /* aperta ao clicar */
+.btn-acao:disabled { opacity: 0.35; cursor: not-allowed; } /* aparência desabilitado */
+
+/* Botão Copy — dourado */
+.btn-copy {
+    background: rgba(212,175,55,0.12);
+    border-color: rgba(212,175,55,0.5);
+    color: #d4af37;
+}
+.btn-copy:not(:disabled):hover { background: rgba(212,175,55,0.25); border-color: #d4af37; }
+
+/* Estado "copiado!" — muda para verde por 1.5s */
+.btn-copy.copiado {
+    background: rgba(0,255,179,0.15);
+    border-color: #00ffb3;
+    color: #00ffb3;
+}
+
+/* Botão fantasma (Clear History) — discreto */
+.btn-ghost {
+    background: transparent;
+    border-color: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.45);
+    font-size: 0.75em;
+}
+.btn-ghost:hover { background: rgba(255,77,77,0.12); border-color: #ff4d4d; color: #ff4d4d; }
+
+
+/* ------------------------------------------------
+   LINHAS DO TECLADO
+   flex-wrap: nowrap → as teclas nunca quebram para
+   a linha de baixo, elas encolhem juntas.
+   ------------------------------------------------ */
 .linha-teclas {
     display: flex;
     justify-content: center;
-    margin-bottom: 10px;
+    gap: clamp(2px, 0.5vw, 5px); /* espaço fluido entre teclas */
+    margin-bottom: clamp(3px, 0.8vh, 8px);
+    flex-wrap: nowrap;
+    width: 100%;
 }
 
-/* Teclas */
+
+/* ------------------------------------------------
+   TECLAS
+   flex: 1 1 0 → cada tecla ocupa uma fração igual
+   do espaço disponível na linha.
+   aspect-ratio → mantém proporção próxima de quadrado.
+   font-size com clamp → a fonte encolhe com a tecla.
+   ------------------------------------------------ */
 .tecla {
-    font-size: 1.1em;
-    margin: 4px;
-    padding: 12px 20px;
-    border-radius: 10px;
+    flex: 1 1 0;   /* cresce e encolhe igualmente */
+    min-width: 0;  /* permite encolher além do conteúdo */
+    aspect-ratio: 1 / 1.05; /* levemente mais alta que larga */
+    max-width: 60px;
+    border-radius: clamp(5px, 1.2vw, 10px);
     border: 2px solid #555;
-    background: rgba(20, 20, 20, 0.85);
+    background: rgba(14, 14, 20, 0.88);
     color: #fff;
     cursor: pointer;
-    transition: 0.2s;
+    transition: transform 0.15s, filter 0.15s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    font-family: Arial, sans-serif;
+    font-size: clamp(0.6em, 2vw, 1.05em); /* escala com o tamanho da tela */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
 }
 
-.tecla.sf-ativo {
-    font-family: 'FonteSoulframe';
-}
+/* Fontes de runas nas teclas */
+.tecla.sf-ativo   { font-family: 'FonteSoulframe'; }
+.tecla.novo-ativo { font-family: 'FonteRose'; }
 
-.tecla:hover {
-    background: #222;
-    transform: scale(1.05);
-}
+/* Hover: escurece levemente e cresce 5% */
+.tecla:hover  { background: #1e1e2a; transform: scale(1.05); }
+/* Clique: afunda (efeito de tecla física) */
+.tecla:active { transform: scale(0.95); filter: brightness(1.35); }
 
-/* Efeito de clique */
-.tecla:active {
-    transform: scale(0.95);
-    filter: brightness(1.3);
-}
 
-/* =========================
-   ANIMAÇÕES DE WAVE POR COR
-   ========================= */
+/* ------------------------------------------------
+   ANIMAÇÕES DE BORDA (WAVE)
+   Cada linha do teclado tem uma cor diferente
+   que pulsa continuamente.
 
-/* Wave vermelho */
+   Linha verde  (QWERTYUIOP e Space)
+   Linha vermelha (ASDFGHJKL)
+   Linha azul   (ZXCVBNM + botões especiais)
+   borderWave   (borda do display)
+   ------------------------------------------------ */
 @keyframes waveRed {
-    0% { border-color: #ff4d4d; box-shadow: 0 0 10px #ff4d4d; }
-    50% { border-color: #ff1a1a; box-shadow: 0 0 10px #ff1a1a; }
-    100% { border-color: #ff4d4d; box-shadow: 0 0 10px #ff4d4d; }
+    0%,100% { border-color: #ff4d4d; box-shadow: 0 0 7px #ff4d4d; }
+    50%     { border-color: #ff1a1a; box-shadow: 0 0 7px #ff1a1a; }
 }
-
-/* Wave verde */
 @keyframes waveGreen {
-    0% { border-color: #00ffb3; box-shadow: 0 0 10px #00ffb3; }
-    50% { border-color: #00cc99; box-shadow: 0 0 10px #00cc99; }
-    100% { border-color: #00ffb3; box-shadow: 0 0 10px #00ffb3; }
+    0%,100% { border-color: #00ffb3; box-shadow: 0 0 7px #00ffb3; }
+    50%     { border-color: #00cc99; box-shadow: 0 0 7px #00cc99; }
 }
-
-/* Wave azul */
 @keyframes waveBlue {
-    0% { border-color: #3399ff; box-shadow: 0 0 10px #3399ff; }
-    50% { border-color: #0066ff; box-shadow: 0 0 10px #0066ff; }
-    100% { border-color: #3399ff; box-shadow: 0 0 10px #3399ff; }
+    0%,100% { border-color: #3399ff; box-shadow: 0 0 7px #3399ff; }
+    50%     { border-color: #0066ff; box-shadow: 0 0 7px #0066ff; }
 }
-
-/* Wave dourado para a borda do display */
 @keyframes borderWave {
-    0%   { border-color: rgba(212, 175, 55, 0.5); box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
-    50%  { border-color: rgba(212, 175, 55, 1);   box-shadow: 0 0 20px rgba(212, 175, 55, 0.6); }
-    100% { border-color: rgba(212, 175, 55, 0.5); box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+    0%,100% { border-color: rgba(212,175,55,0.5); box-shadow: 0 0 10px rgba(212,175,55,0.25); }
+    50%     { border-color: rgba(212,175,55,1);   box-shadow: 0 0 18px rgba(212,175,55,0.55); }
 }
 
+/* Aplica a animação correta em cada linha */
+.linha-vermelha .tecla { animation: waveRed   2s linear infinite; }
+.linha-verde    .tecla { animation: waveGreen 2s linear infinite; }
+.linha-azul     .tecla { animation: waveBlue  2s linear infinite; }
 
-/* Aplicar animação por linha */
-.linha-vermelha .tecla {
-    animation: waveRed 2s linear infinite;
-    animation-delay: calc((var(--i)) * 0.1s); /* da direita para a esquerda ajustado via HTML */
-}
 
-.linha-verde .tecla {
-    animation: waveGreen 2s linear infinite;
-    animation-delay: calc((var(--i)) * 0.1s);
-}
-
-.linha-azul .tecla {
-    animation: waveBlue 2s linear infinite;
-    animation-delay: calc((var(--i)) * 0.1s);
-}
-
-/* Tecla de espaço */
+/* ------------------------------------------------
+   TECLA ESPAÇO
+   Ocupa 55% da linha — nunca passa de 370px
+   e nunca fica menor que 150px.
+   aspect-ratio: unset → não é quadrada como as outras.
+   ------------------------------------------------ */
 #espaco {
-    width: 400px;
-    background: rgba(20, 20, 20, 0.85);
+    flex: 0 0 auto; /* não cresce nem encolhe com as outras */
+    width: clamp(150px, 55%, 370px);
+    aspect-ratio: unset;
+    height: clamp(32px, 5.5vw, 46px);
+    max-width: none;
+    background: rgba(14,14,20,0.88);
     font-weight: bold;
+    font-size: clamp(0.68em, 1.6vw, 0.92em);
 }
 
-/* =========================
-   RESPONSIVIDADE AJUSTADA
-   ========================= */
 
-/* Tablets e celulares */
-@media (max-width: 768px) {
-    body {
-        padding: 10px;
-        overflow-x: hidden;
-    }
-
-    #titulo {
-        font-size: 2em;
-        margin-top: 15px;
-        text-shadow:
-            2px 2px 0 #000,
-            -2px -2px 0 #000,
-            0 0 10px rgba(255, 215, 0, 0.7);
-    }
-
-    .teclado-container {
-        width: 95%;
-        padding: 10px;
-        border-radius: 15px;
-    }
-
-    #display {
-        width: 90%;
-        height: 80px;
-        font-size: 1em;
-        padding: 8px;
-        margin-bottom: 15px;
-    }
-
-    .linha-teclas {
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-bottom: 8px;
-    }
-
-    .tecla {
-        flex: 1 0 9%;
-        min-width: 40px;
-        max-width: 55px;
-        padding: 10px 0;
-        font-size: 0.9em;
-        margin: 3px;
-    }
-
-    #espaco {
-        width: 80%;
-    }
+/* ------------------------------------------------
+   HISTÓRICO DE TRADUÇÕES
+   Aparece abaixo das teclas quando tem entradas.
+   max-height + overflow-y → scroll interno se
+   tiver muitas entradas.
+   ------------------------------------------------ */
+.historico-container {
+    margin-top: 8px;
+    width: 100%;
+    background: rgba(10,10,16,0.75);
+    border: 1px solid rgba(212,175,55,0.2);
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-/* Celulares pequenos (tela < 480px) */
-@media (max-width: 480px) {
-    #titulo {
-        font-size: 1.5em;
-        margin-top: 10px;
-    }
+.historico-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    border-bottom: 1px solid rgba(212,175,55,0.12);
+}
 
-    .teclado-container {
-        width: 98%;
-        padding: 8px;
-    }
+.historico-titulo {
+    font-size: 0.72em;
+    color: rgba(212,175,55,0.65);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
 
-    #display {
-        width: 95%;
-        height: 70px;
-        font-size: 0.95em;
-        padding: 6px;
-    }
+/* Lista com scroll interno máximo de 130px */
+.historico-lista {
+    list-style: none;
+    max-height: 130px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(212,175,55,0.15) transparent;
+}
+.historico-lista::-webkit-scrollbar       { width: 3px; }
+.historico-lista::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.2); border-radius: 3px; }
 
-    .tecla {
-        min-width: 35px;
-        max-width: 50px;
-        font-size: 0.85em;
-        padding: 8px 0;
-        margin: 2px;
-    }
+/* Cada item do histórico: texto + badge de idioma + botão copiar */
+.historico-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 12px;
+    gap: 8px;
+    transition: background 0.15s;
+}
+.historico-item:hover { background: rgba(212,175,55,0.05); }
 
-    #espaco {
-        width: 90%;
+/* Texto do item — corta com "..." se for muito longo */
+.historico-item__texto {
+    flex: 1;
+    font-size: 0.84em;
+    color: #e8e0cc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* mostra "..." quando o texto é longo */
+    text-align: left;
+    min-width: 0;
+}
+
+.historico-item__meta { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+/* Badge com o nome do idioma (LAT / ODE / ROS) */
+.historico-item__lang {
+    font-size: 0.62em;
+    color: #d4af37;
+    background: rgba(212,175,55,0.1);
+    border: 1px solid rgba(212,175,55,0.3);
+    border-radius: 20px;
+    padding: 1px 6px;
+}
+
+/* Botão de copiar cada item */
+.historico-item__copiar {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: rgba(255,255,255,0.3);
+    cursor: pointer;
+    padding: 3px 5px;
+    line-height: 1;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+}
+.historico-item__copiar:hover {
+    color: #d4af37;
+    border-color: rgba(212,175,55,0.35);
+    background: rgba(212,175,55,0.07);
+}
+
+
+/* ------------------------------------------------
+   SEÇÃO DE APOIO (Buy me a coffee)
+   Fica abaixo do teclado.
+   Largura alinhada com o container do teclado.
+   ------------------------------------------------ */
+.apoio-container {
+    width: min(640px, 96vw);
+    flex-shrink: 0;
+}
+
+/* Card com efeito de vidro e borda dourada */
+.apoio-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(14,14,20,0.82);
+    border: 1px solid rgba(212,175,55,0.22);
+    border-radius: 14px;
+    padding: clamp(12px, 2.5vw, 20px) clamp(14px, 3vw, 22px);
+    text-align: left;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+.apoio-card:hover {
+    border-color: rgba(212,175,55,0.5);
+    box-shadow: 0 0 18px rgba(212,175,55,0.12);
+}
+
+.apoio-icon { font-size: clamp(1.3rem, 3.5vw, 1.8rem); line-height: 1; flex-shrink: 0; margin-top: 2px; }
+.apoio-texto { flex: 1; min-width: 0; }
+.apoio-titulo { font-size: clamp(0.88rem, 2.2vw, 1rem); font-weight: 700; color: #ffd700; margin: 0 0 4px; }
+.apoio-desc { font-size: clamp(0.72em, 1.8vw, 0.81em); color: rgba(232,224,204,0.6); line-height: 1.55; margin: 0 0 10px; }
+
+/* Botão laranja do Buy me a coffee */
+.apoio-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: clamp(7px, 1.5vw, 9px) clamp(14px, 2.5vw, 20px);
+    border-radius: 50px;
+    background: linear-gradient(135deg, #ffb800, #ff8c00);
+    color: #1a0800;
+    font-weight: 700;
+    font-size: clamp(0.75em, 1.8vw, 0.83em);
+    text-decoration: none;
+    transition: filter 0.15s, transform 0.15s;
+    -webkit-tap-highlight-color: transparent;
+}
+.apoio-btn:hover { filter: brightness(1.1); transform: translateY(-1px); color: #1a0800; text-decoration: none; }
+
+/* Link do GitHub — discreto, no canto direito */
+.github-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: rgba(255,255,255,0.3);
+    font-size: clamp(0.58em, 1.4vw, 0.68em);
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: color 0.15s;
+    align-self: center;
+}
+.github-link:hover { color: rgba(255,255,255,0.65); text-decoration: none; }
+.github-link svg   { width: clamp(15px, 2.5vw, 19px); height: clamp(15px, 2.5vw, 19px); }
+
+
+/* ------------------------------------------------
+   TOAST DE CONFIRMAÇÃO
+   Aparece na parte inferior da tela por 2.2 segundos
+   quando o usuário copia o texto.
+
+   Começa fora da tela (translateY(70px)) e sobe
+   ao receber a classe "visivel".
+   ------------------------------------------------ */
+.toast {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%) translateY(70px); /* começa escondido abaixo */
+    z-index: 9999;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 20px;
+    border-radius: 50px;
+    background: rgba(6,20,14,0.97);
+    border: 1px solid rgba(0,255,179,0.5);
+    color: #00ffb3;
+    font-size: 0.83em;
+    pointer-events: none; /* não bloqueia cliques na página */
+    white-space: nowrap;
+    opacity: 0;
+    /* Animação com "mola" ao aparecer (cubic-bezier) */
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
+    will-change: transform, opacity;
+    max-width: 90vw;
+}
+
+/* Classe adicionada pelo JavaScript para mostrar o toast */
+.toast.visivel {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0); /* sobe para a posição final */
+}
+
+
+/* ------------------------------------------------
+   RESPONSIVIDADE
+
+   Não precisa de muitas regras aqui porque usamos
+   clamp() em quase tudo — os valores já são fluidos.
+   Só ajustes pontuais para telas muito pequenas.
+   ------------------------------------------------ */
+
+/* Celulares muito pequenos (iPhone SE, Galaxy A) — tela ≤ 380px */
+@media (max-width: 380px) {
+    #titulo { font-size: 1.15em; }
+    .teclado-container { padding: 6px; border-radius: 10px; }
+    .linha-teclas { gap: 2px; margin-bottom: 3px; }
+    .tecla { font-size: 0.56em; border-width: 1.5px; }
+    #espaco { height: 30px; font-size: 0.6em; }
+    #display { height: 55px; font-size: 0.85em; }
+}
+
+/* Seção de apoio empilha verticalmente em celulares ≤ 520px */
+@media (max-width: 520px) {
+    .apoio-card { flex-direction: column; gap: 10px; }
+    .github-link { flex-direction: row; align-self: flex-start; gap: 6px; }
+}
+
+/* ------------------------------------------------
+   REDUCED MOTION
+   Para usuários que têm sensibilidade a animações
+   (configurado no sistema operacional deles).
+   Desativa TODAS as animações e transições.
+   Mantém a primeira imagem visível como estática.
+   ------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
+    /* Mostra só a primeira imagem, parada */
+    .kb-slide:nth-child(1) { opacity: 1; }
 }
