@@ -407,5 +407,48 @@ restaurarRascunho();   // carrega o texto salvo da sessão anterior
 renderizarHistorico(); // carrega o histórico do localStorage
 syncBotoes();          // sincroniza estado dos botões
 
+
+/* ------------------------------------------------
+   MODAL DE ATUALIZAÇÃO
+   Aparece uma vez por versão ao abrir o site.
+   Para mostrar na próxima atualização, mude
+   VERSAO_ATUAL para o novo número (ex: '2.1').
+   ------------------------------------------------ */
+const VERSAO_ATUAL = '2.0';
+
+(function verificarAtualizacao() {
+    // Busca a última versão que o usuário já viu
+    const versaoVista = localStorage.getItem('sf-kb:versao');
+
+    // Se é a primeira visita ou é versão nova, mostra o modal
+    if (versaoVista !== VERSAO_ATUAL) {
+        const overlay  = document.getElementById('modal-update');
+        const btnFechar = document.getElementById('modal-update-fechar');
+
+        // Pequeno delay para o modal aparecer após a página carregar
+        setTimeout(() => {
+            overlay.setAttribute('aria-hidden', 'false');
+            overlay.classList.add('visivel');
+            btnFechar.focus(); // acessibilidade — foco vai direto para o botão
+        }, 600);
+
+        // Fecha ao clicar no botão "Entendido!"
+        btnFechar.addEventListener('click', fecharModal);
+
+        // Fecha também ao clicar no fundo escuro fora do modal
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) fecharModal();
+        });
+
+        function fecharModal() {
+            overlay.classList.remove('visivel');
+            overlay.setAttribute('aria-hidden', 'true');
+            // Salva que o usuário já viu esta versão — não aparece mais
+            localStorage.setItem('sf-kb:versao', VERSAO_ATUAL);
+        }
+    }
+})();
+
+
 // Mensagem no console do navegador (F12) para confirmar que carregou
 console.info('%c⚔ Soulframe Keyboard v2.0 %c— loaded', 'color:#d4af37;font-weight:bold;', 'color:#888;');

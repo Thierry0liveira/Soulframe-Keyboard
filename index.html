@@ -182,7 +182,7 @@
           <p class="apoio-desc">If you enjoy this project and would like to support its development, consider buying me a coffee.</p>
 
           <!-- Link para a página do Buy Me a Coffee — troque SEULINK pelo seu usuário -->
-          <a href="https://www.buymeacoffee.com/ThierryDev" target="_blank" rel="noopener noreferrer" class="apoio-btn">
+          <a href="https://buymeacoffee.com/SEULINK" target="_blank" rel="noopener noreferrer" class="apoio-btn">
             &#9749; Buy me a coffee
           </a>
         </div>
@@ -213,6 +213,48 @@
     </div>
 
   </div><!-- /page-scroll -->
+
+  <!-- ================================================
+       MODAL DE ATUALIZAÇÃO
+       Criado por: Thierry Oliveira (ThierryDev)
+
+       Aparece automaticamente na primeira visita
+       após cada nova versão do projeto.
+       Só mostra uma vez — depois fica salvo no
+       localStorage e nunca mais aparece até a
+       próxima versão.
+
+       Para atualizar: mude VERSAO_ATUAL no main.js
+       e edite a lista de novidades abaixo.
+       ================================================ -->
+  <div id="modal-update" class="modal-update-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-update-title">
+    <div class="modal-update">
+
+      <!-- Ícone decorativo -->
+      <div class="modal-update__icon" aria-hidden="true">⚔️</div>
+
+      <!-- Badge de versão -->
+      <span class="modal-update__badge">🆕 v2.0</span>
+
+      <!-- Título -->
+      <h2 class="modal-update__title" id="modal-update-title">Soulframe Keyboard has been updated!</h2>
+
+      <!-- Lista de novidades -->
+      <ul class="modal-update__list" aria-label="What's new in this version">
+        <li>Game art slideshow background</li>
+        <li>Copy translation button</li>
+        <li>Translation history</li>
+        <li>Better mobile support</li>
+        <li>Draft saved on page reload</li>
+      </ul>
+
+      <!-- Botão de fechar -->
+      <button class="modal-update__btn" id="modal-update-fechar">
+        Got it! ✓
+      </button>
+
+    </div>
+  </div>
 
   <!-- JavaScript — carregado no final para não travar o carregamento da página -->
   <script src="main.js"></script>
